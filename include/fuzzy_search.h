@@ -66,7 +66,7 @@ void similarStrings(const string& inputString,const string& textString, priority
 
     int numberOfMatchedWords = 0;
 
-    /*
+    
     for(int i = 0;i < inputLength;i++){
         if(mp.find(textWords[i]) != mp.end())
             numberOfMatchedWords++;
@@ -84,8 +84,9 @@ void similarStrings(const string& inputString,const string& textString, priority
         if(pq.size() > 10)
             pq.pop();
     }
-*/
+
     
+    /*
        for(int i = 0;i < textWords.size() - inputWords.size();i++){
        numberOfMatchedWords = 0;
        for(int j = i;j < i + inputWords.size();j++){
@@ -97,7 +98,7 @@ void similarStrings(const string& inputString,const string& textString, priority
        if(pq.size() > 10)
        pq.pop();
        }
-       
+      */ 
 } 
 
 
@@ -125,9 +126,14 @@ void TextEditor::searching(string& searchingString,vector<string>& result){
 }
 
 void TextEditor::fuzzy_search(string searchingString){
-     vector<string> result;
+    vector<string> result;
+    auto start = chrono::high_resolution_clock::now();
     searching(searchingString,result);
-      for(auto suggestion : result){
+    auto end = chrono::high_resolution_clock::now();
+chrono::duration<double> duration = end-start;
+    cout<<"Execution time: "<<duration.count()<<" seconds\n";
+     
+    for(auto suggestion : result){
         Gtk::Label* label = Gtk::manage(new Gtk::Label(suggestion));
         m_suggestionList->append(*label);
         label->show();
