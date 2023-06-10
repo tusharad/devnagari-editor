@@ -7,6 +7,7 @@
 #include <exception>
 #include <numeric>
 #include <queue>
+#include <chrono>
 using namespace std;
 
 class TextEditor : public Gtk::Window {
