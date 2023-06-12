@@ -79,7 +79,7 @@ TextEditor::TextEditor() : m_VBox(Gtk::ORIENTATION_VERTICAL, 0) {
     // Text view
     m_refTextBuffer = Gtk::TextBuffer::create();
     m_TextView.set_buffer(m_refTextBuffer);
-    m_TextView.override_font(Pango::FontDescription("Sans 16"));
+    m_TextView.override_font(Pango::FontDescription("Sans 14"));
 
     m_ScrolledWindow.add(m_TextView);
 
@@ -117,7 +117,7 @@ TextEditor::TextEditor() : m_VBox(Gtk::ORIENTATION_VERTICAL, 0) {
         Gtk::Label* search_label = Gtk::manage(new Gtk::Label("searching"));
         m_suggestionList->append(*search_label);
         search_label->show();
-
+    
             // Create a new thread and call fuzzy_search() function
             thread search_thread([this,selected_text](){
                     fuzzy_search(selected_text);
@@ -125,8 +125,7 @@ TextEditor::TextEditor() : m_VBox(Gtk::ORIENTATION_VERTICAL, 0) {
             search_thread.detach();
             //search_thread.join();
 
- 
-
+    
             return false;
             }
 

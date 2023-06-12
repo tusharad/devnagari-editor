@@ -19,6 +19,7 @@ string joinString(vector<string>& vec,int start,int size){
     return res;
 }
 
+
 int levensteinDistance(const string& searchingString, const string& chunk){
     int m = searchingString.length();
     int n = chunk.length();
@@ -46,6 +47,8 @@ bool closerString(unordered_map<string,int>& mp,string& str){
     if(mp.find(str) != mp.end())
         return true;
     for(auto it : mp){
+        if (((str.length() > it.first.length()) ? str.length() - it.first.length() : it.first.length()-str.length()) >= 3)
+            continue;
         int distance = levensteinDistance(str,it.first);
         if(distance <= 2)
             return true;
@@ -53,7 +56,8 @@ bool closerString(unordered_map<string,int>& mp,string& str){
     return false;
 }
 
-void similarStrings(const string& inputString,const string& textString, priority_queue< pair<int,string>, vector<pair<int,string>> ,greater<pair<int,string>> > &pq){
+
+void similarStrings(const string& inputString,const string& textString, priority_queue< pair<float,string>, vector<pair<float,string>> ,greater<pair<float,string>> > &pq){
     vector<string> inputWords = splitString(inputString);
     int inputLength = inputWords.size();
 
@@ -65,27 +69,31 @@ void similarStrings(const string& inputString,const string& textString, priority
         mp[word]++;
 
     int numberOfMatchedWords = 0;
-
+    set<string> matchedWords;
     
-    for(int i = 0;i < inputLength;i++){
+    for(int i = 0;i < 2*inputLength;i++){
         if(mp.find(textWords[i]) != mp.end())
-            numberOfMatchedWords++;
+            matchedWords.insert(textWords[i]);
     }
-    if(numberOfMatchedWords > inputLength/2)
-        pq.push({numberOfMatchedWords,joinString(textWords, 0, inputLength)});
+    if(matchedWords.size() > inputLength/2)
+        pq.push({matchedWords.size(),joinString(textWords, 0, 2*inputLength)});
 
-    for(int i = inputLength;i < textLength;i++){
+    for(int i = 2*inputLength;i < textLength;i++){
         if(mp.find(textWords[i]) != mp.end())
-            numberOfMatchedWords++;
-        if(mp.find(textWords[i-inputLength]) != mp.end())
-            numberOfMatchedWords--;
-        if (numberOfMatchedWords > inputLength / 2)
-            pq.push({numberOfMatchedWords,joinString(textWords, i-inputLength+1, inputLength)});
+            matchedWords.insert(textWords[i]);
+        if(mp.find(textWords[i-2*inputLength]) != mp.end())
+            matchedWords.erase(textWords[i-2*inputLength]);
+        if (matchedWords.size() > inputLength / 2){
+            int start = i-2*inputLength;
+            int end = i;
+            while(start < end && matchedWords.count(textWords[start]) != 1)
+                start++;
+            pq.push({matchedWords.size() - ((end-start+1) - inputLength)*0.125,joinString(textWords, start, end-start+1)});
+        }
         if(pq.size() > 10)
             pq.pop();
     }
 
-    
     /*
        for(int i = 0;i < textWords.size() - inputWords.size();i++){
        numberOfMatchedWords = 0;
@@ -98,12 +106,12 @@ void similarStrings(const string& inputString,const string& textString, priority
        if(pq.size() > 10)
        pq.pop();
        }
-      */ 
+       */
 } 
 
 
 void TextEditor::searching(string& searchingString,vector<string>& result){
-    priority_queue< pair<int,string>, vector<pair<int,string>> ,greater<pair<int,string>> > pq;
+    priority_queue< pair<float,string>, vector<pair<float,string>> ,greater<pair<float,string>> > pq;
     for(auto file : filenames){
         ifstream input(file);
         string line;
@@ -130,13 +138,16 @@ void TextEditor::fuzzy_search(string searchingString){
     auto start = chrono::high_resolution_clock::now();
     searching(searchingString,result);
     auto end = chrono::high_resolution_clock::now();
-chrono::duration<double> duration = end-start;
+    chrono::duration<double> duration = end-start;
     cout<<"Execution time: "<<duration.count()<<" seconds\n";
-     
+
+    int i = 1;
     for(auto suggestion : result){
-        Gtk::Label* label = Gtk::manage(new Gtk::Label(suggestion));
+        Gtk::Label* label = Gtk::manage(new Gtk::Label(to_string(i)+". "+suggestion));
+        label->override_background_color(Gdk::RGBA("white"));
+        label->override_color(Gdk::RGBA("black"));
         m_suggestionList->append(*label);
-        label->show();
+        i++;
     }
     show_all();
 }
