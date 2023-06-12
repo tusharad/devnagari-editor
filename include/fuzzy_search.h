@@ -57,7 +57,7 @@ bool closerString(unordered_map<string,int>& mp,string& str){
 }
 
 
-void similarStrings(const string& inputString,const string& textString, priority_queue< pair<int,string>, vector<pair<int,string>> ,greater<pair<int,string>> > &pq){
+void similarStrings(const string& inputString,const string& textString, priority_queue< pair<float,string>, vector<pair<float,string>> ,greater<pair<float,string>> > &pq){
     vector<string> inputWords = splitString(inputString);
     int inputLength = inputWords.size();
 
@@ -71,20 +71,24 @@ void similarStrings(const string& inputString,const string& textString, priority
     int numberOfMatchedWords = 0;
     set<string> matchedWords;
     
-    for(int i = 0;i < inputLength;i++){
+    for(int i = 0;i < 2*inputLength;i++){
         if(mp.find(textWords[i]) != mp.end())
             matchedWords.insert(textWords[i]);
     }
     if(matchedWords.size() > inputLength/2)
-        pq.push({matchedWords.size(),joinString(textWords, 0, inputLength)});
+        pq.push({matchedWords.size(),joinString(textWords, 0, 2*inputLength)});
 
-    for(int i = inputLength;i < textLength;i++){
+    for(int i = 2*inputLength;i < textLength;i++){
         if(mp.find(textWords[i]) != mp.end())
             matchedWords.insert(textWords[i]);
-        if(mp.find(textWords[i-inputLength]) != mp.end())
-            matchedWords.erase(textWords[i-inputLength]);
+        if(mp.find(textWords[i-2*inputLength]) != mp.end())
+            matchedWords.erase(textWords[i-2*inputLength]);
         if (matchedWords.size() > inputLength / 2){
-            pq.push({matchedWords.size(),joinString(textWords, i-inputLength+1, inputLength)});
+            int start = i-2*inputLength;
+            int end = i;
+            while(start < end && matchedWords.count(textWords[start]) != 1)
+                start++;
+            pq.push({matchedWords.size() - ((end-start+1) - inputLength)*0.125,joinString(textWords, start, end-start+1)});
         }
         if(pq.size() > 10)
             pq.pop();
@@ -107,7 +111,7 @@ void similarStrings(const string& inputString,const string& textString, priority
 
 
 void TextEditor::searching(string& searchingString,vector<string>& result){
-    priority_queue< pair<int,string>, vector<pair<int,string>> ,greater<pair<int,string>> > pq;
+    priority_queue< pair<float,string>, vector<pair<float,string>> ,greater<pair<float,string>> > pq;
     for(auto file : filenames){
         ifstream input(file);
         string line;
