@@ -40,7 +40,7 @@ void TextEditor::on_textview_changed() {
             break;
     }
 
-    //searching in dictionary (p.txt)
+    //searching in dictionary (all_words.txt)
     for (const auto &word : m_words) {
         if (word.compare(0, given_word.length(),given_word) == 0){
             if(find(suggestion_words.begin(),suggestion_words.end(),word) == suggestion_words.end())

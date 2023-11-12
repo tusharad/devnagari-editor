@@ -93,20 +93,6 @@ void similarStrings(const string& inputString,const string& textString, priority
         if(pq.size() > 10)
             pq.pop();
     }
-
-    /*
-       for(int i = 0;i < textWords.size() - inputWords.size();i++){
-       numberOfMatchedWords = 0;
-       for(int j = i;j < i + inputWords.size();j++){
-       if(mp.find(textWords[j]) != mp.end())
-       numberOfMatchedWords++;
-       }
-       if (numberOfMatchedWords > inputLength / 2)
-       pq.push({numberOfMatchedWords,joinString(textWords, i, inputLength)});
-       if(pq.size() > 10)
-       pq.pop();
-       }
-       */
 } 
 
 

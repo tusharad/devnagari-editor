@@ -1,13 +1,9 @@
-#include <algorithm>
 #include <fstream>
 #include <gtkmm.h>
 #include <iostream>
 #include <string>
 #include <thread>
-#include <exception>
-#include <numeric>
 #include <queue>
-#include <chrono>
 using namespace std;
 
 class TextEditor : public Gtk::Window {
@@ -44,15 +40,11 @@ class TextEditor : public Gtk::Window {
 };
 
 TextEditor::TextEditor() : m_VBox(Gtk::ORIENTATION_VERTICAL, 0) {
- 
-
     set_title("Text Editor");
     set_default_size(800, 600);
-
-    // Menu bar
-    Gtk::MenuItem *item_menu_file = Gtk::manage(new Gtk::MenuItem("_File", true));
+    
+    Gtk::MenuItem *item_menu_file= Gtk::manage(new Gtk::MenuItem("_File", true));
     Gtk::Menu *menu_file = Gtk::manage(new Gtk::Menu());
-
     item_menu_file->set_submenu(*menu_file);
     m_MenuBar.append(*item_menu_file);
     m_VBox.pack_start(m_MenuBar, Gtk::PACK_SHRINK);
@@ -113,122 +105,122 @@ TextEditor::TextEditor() : m_VBox(Gtk::ORIENTATION_VERTICAL, 0) {
             Gtk::TextBuffer::iterator start, end;
             m_TextView.get_buffer()->get_selection_bounds(start, end);
             Glib::ustring selected_text = m_TextView.get_buffer()->get_text(start, end);
- 
-        Gtk::Label* search_label = Gtk::manage(new Gtk::Label("searching"));
-        m_suggestionList->append(*search_label);
-        search_label->show();
-    
+
+            Gtk::Label* search_label = Gtk::manage(new Gtk::Label("searching"));
+            m_suggestionList->append(*search_label);
+            search_label->show();
+
             // Create a new thread and call fuzzy_search() function
             thread search_thread([this,selected_text](){
                     fuzzy_search(selected_text);
-                  });
+                    });
             search_thread.detach();
             //search_thread.join();
 
-    
+
             return false;
             }
 
             else if(event->keyval >= GDK_KEY_1 && event->keyval <= GDK_KEY_9 && event->state & GDK_CONTROL_MASK){
-    
+
                 int row_number = -1;
                 switch(event->keyval){
                     case GDK_KEY_1:
                         row_number = 1;
-                    break;
+                        break;
                     case GDK_KEY_2:
                         row_number = 2;
-                    break;
+                        break;
                     case GDK_KEY_3:
                         row_number = 3;
-                    break;
+                        break;
                     case GDK_KEY_4:
                         row_number = 4;
-                    break;
+                        break;
                     case GDK_KEY_5:
                         row_number = 5;
-                    break;
+                        break;
                     case GDK_KEY_6:
                         row_number = 6;
-                    break;
+                        break;
                     case GDK_KEY_7:
                         row_number = 7;
-                    break;
+                        break;
                     case GDK_KEY_8:
                         row_number = 8;
-                    break;
+                        break;
                     case GDK_KEY_9:
                         row_number = 9;
-                    break;
+                        break;
                 }
-            // Select the corresponding row in the ListBox
-            if (row_number >= 0) {
-                auto rows = m_suggestionList->get_children();
-                if (row_number < rows.size()) {
-                    Gtk::ListBoxRow *row =
-                        dynamic_cast<Gtk::ListBoxRow *>(rows[row_number]);
-                    if (row) {
-                        m_suggestionList->select_row(*row);
-                        insert_selected_row(row);
+                // Select the corresponding row in the ListBox
+                if (row_number >= 0) {
+                    auto rows = m_suggestionList->get_children();
+                    if (row_number < rows.size()) {
+                        Gtk::ListBoxRow *row =
+                            dynamic_cast<Gtk::ListBoxRow *>(rows[row_number]);
+                        if (row) {
+                            m_suggestionList->select_row(*row);
+                            insert_selected_row(row);
+                        }
+                        return true; // Stop event propagation
                     }
-                    return true; // Stop event propagation
                 }
-            }
 
             }
 
             // Check if the Alt key and a number key were pressed
             if (event->state & GDK_MOD1_MASK) {
-            int row_number = -1;
-            switch (event->keyval) {
-                case GDK_KEY_1:
-                    row_number = 0;
-                    break;
-                case GDK_KEY_2:
-                    row_number = 1;
-                    break;
-                case GDK_KEY_3:
-                    row_number = 2;
-                    break;
-                case GDK_KEY_4:
-                    row_number = 3;
-                    break;
-                case GDK_KEY_5:
-                    row_number = 4;
-                    break;
-                case GDK_KEY_6:
-                    row_number = 5;
-                    break;
-                case GDK_KEY_7:
-                    row_number = 6;
-                    break;
-                case GDK_KEY_8:
-                    row_number = 7;
-                    break;
-                case GDK_KEY_9:
-                    row_number = 8;
-                    break;
-            }
-            // Select the corresponding row in the ListBox
-            if (row_number >= 0) {
-                auto rows = m_WordList.get_children();
-                if (row_number < rows.size()) {
-                    Gtk::ListBoxRow *row =
-                        dynamic_cast<Gtk::ListBoxRow *>(rows[row_number]);
-                    if (row) {
-                        m_WordList.select_row(*row);
-                        insert_selected_row(row);
-                    }
-                    return true; // Stop event propagation
+                int row_number = -1;
+                switch (event->keyval) {
+                    case GDK_KEY_1:
+                        row_number = 0;
+                        break;
+                    case GDK_KEY_2:
+                        row_number = 1;
+                        break;
+                    case GDK_KEY_3:
+                        row_number = 2;
+                        break;
+                    case GDK_KEY_4:
+                        row_number = 3;
+                        break;
+                    case GDK_KEY_5:
+                        row_number = 4;
+                        break;
+                    case GDK_KEY_6:
+                        row_number = 5;
+                        break;
+                    case GDK_KEY_7:
+                        row_number = 6;
+                        break;
+                    case GDK_KEY_8:
+                        row_number = 7;
+                        break;
+                    case GDK_KEY_9:
+                        row_number = 8;
+                        break;
                 }
-            }
+                // Select the corresponding row in the ListBox
+                if (row_number >= 0) {
+                    auto rows = m_WordList.get_children();
+                    if (row_number < rows.size()) {
+                        Gtk::ListBoxRow *row =
+                            dynamic_cast<Gtk::ListBoxRow *>(rows[row_number]);
+                        if (row) {
+                            m_WordList.select_row(*row);
+                            insert_selected_row(row);
+                        }
+                        return true; // Stop event propagation
+                    }
+                }
             }
             return false; // Let other signal handlers process the event
     });
 
     cache_words = read_data_file("text_files/cache_words.txt");
     reverse(cache_words.begin(),cache_words.end());
-    m_words = read_data_file("text_files/p.txt");
+    m_words = read_data_file("text_files/all_words.txt");
     cacheFile.open("text_files/cache_words.txt",std::ios::app);
     show_all();
 }
